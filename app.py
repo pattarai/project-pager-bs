@@ -30,23 +30,38 @@ def get_endpoint_function():
     except Exception as e:
         print(e)
 
+
 # Send message to discord
 @app.route('/message', methods=['GET'])
 def send_message():
     try:
-        message = request.args["message"]        
-        url = "https://discord.com/api/webhooks/890522840821006366/Ol38KeLTe2aXel4y2ECnDLuiDdilNYiEjrhMYHTKp8FsGyVPn6CFHD5HwM-7nCR8ww0B"
-        payload = json.dumps({
-        "content": message
-        })
-        headers = {
-        'Content-Type': 'application/json',
-        'Cookie': '__cfruid=b882f9b808096b92c166f27597787a81fff7a4cf-1632389271; __dcfduid=88e1af7c1c5011ecbc9842010a0a066c; __sdcfduid=88e1af7c1c5011ecbc9842010a0a066c8b54e6b16757ef5e34f069e7077c55d22b13cb99c9f9a5a17bafc3d214f0e507'
-        }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        return "success"
+        message = request.args["display"] 
+        listOfNode = ['192.168.1.25', '192.168.1.25','192.168.1.25']
+        
+        # Try and connect to the board
+        try:
+            repl=webrepl.Webrepl(**{'host':'192.168.1.25','port':8266,'password':'mark360'})
+            
+            try:
+                # Setting up the board for OLED Display
+                resp=repl.sendcmd("from machine import Pin, SoftI2C; import ssd1306; from time import sleep; i2c = SoftI2C(scl=Pin(5), sda=Pin(4)); oled_width = 128; oled_height = 64; oled = ssd1306.SSD1306_I2C(oled_width, oled_height, i2c); ")
+                print(resp)
+
+                # Send OLED Message
+                resp=repl.sendcmd(f"oled.text('{message}', 0, 0); oled.show()")
+                return "Successfully Displayed in OLED"
+
+            except Exception as e:
+                print(e)
+                return "Command Failed to Execute"
+
+        except Exception as e:
+            print(e)
+            return "WebREPL connection failed"
+
     except Exception as e:
         print(e)
+        return "Invalid Request Parameters"
 
 # Setting Favicon
 @app.route('/favicon.ico')
