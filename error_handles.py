@@ -1,6 +1,6 @@
 from app import app
 from flask import jsonify, request
-
+import traceback
 
 # 404 handler
 @app.errorhandler(404)

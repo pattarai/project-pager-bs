@@ -1,13 +1,11 @@
-from flask import Flask
+from flask import Flask, request
 from flask.helpers import send_from_directory
-import os
+import os, requests, json
 
 app = Flask(__name__, static_url_path='', static_folder='.')
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 # CORS section
-
-
 @app.after_request
 def after_request_func(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -16,14 +14,12 @@ def after_request_func(response):
     return response
 # end CORS section
 
-
 import error_handles
 
 # Add your API endpoints here
 from routes import users
 # from routes import cars
 # ...
-
 
 @app.route('/')
 def get_endpoint_function():
@@ -33,7 +29,6 @@ def get_endpoint_function():
 
     except Exception as e:
         print(e)
-
 
 # Setting Favicon
 @app.route('/favicon.ico')

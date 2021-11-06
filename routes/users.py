@@ -1,5 +1,6 @@
 import pymysql
-from app import app, forbidden
+from app import app
+from error_handles import forbidden
 from config import mysql
 from flask import jsonify, request
 
